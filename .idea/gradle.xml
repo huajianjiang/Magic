@@ -9,7 +9,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/magic-annotations" />
-            <option value="$PROJECT_DIR$/sample" />
+            <option value="$PROJECT_DIR$/magic-core" />
+            <option value="$PROJECT_DIR$/magic-plugin" />
+            <option value="$PROJECT_DIR$/magic-sample" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

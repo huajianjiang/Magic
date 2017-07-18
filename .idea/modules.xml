@@ -4,7 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Magic.iml" filepath="$PROJECT_DIR$/Magic.iml" />
       <module fileurl="file://$PROJECT_DIR$/magic-annotations/magic-annotations.iml" filepath="$PROJECT_DIR$/magic-annotations/magic-annotations.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/magic-core/magic-core.iml" filepath="$PROJECT_DIR$/magic-core/magic-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/magic-plugin/magic-plugin.iml" filepath="$PROJECT_DIR$/magic-plugin/magic-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/magic-sample/magic-sample.iml" filepath="$PROJECT_DIR$/magic-sample/magic-sample.iml" />
     </modules>
   </component>
 </project>

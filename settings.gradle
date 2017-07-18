@@ -1,1 +1,1 @@
-include ':sample', ':magic-annotations'
+include ':magic-sample', ':magic-annotations', ':magic-core', ':magic-plugin'
