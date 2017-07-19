@@ -5,5 +5,7 @@ package com.github.huajianjiang.magic.core.module;
  * <br>Date: 2017/7/18
  * <br>Email: developer.huajianjiang@gmail.com
  */
-public class A {
+public interface RuntimePermissionModule {
+    boolean shouldShowRationale();
+
 }

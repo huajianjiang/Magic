@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-import static com.github.huajianjiang.magic.core.aspect.permission.PermProcessor.REQUEST_PERM;
+
 
 /**
  * <p>Author: Huajian Jiang
@@ -16,6 +16,7 @@ import static com.github.huajianjiang.magic.core.aspect.permission.PermProcessor
  * <br>Email: developer.huajianjiang@gmail.com
  */
 public final class Perms {
+    private static final int REQUEST_PERM = 1;
 
     public static void checkContext(Object obj) {
         if (obj instanceof Activity || obj instanceof android.support.v4.app.Fragment ||
@@ -50,7 +51,8 @@ public final class Perms {
             ActivityCompat.requestPermissions((Activity) context, permissions, REQUEST_PERM);
         } else if (context instanceof android.support.v4.app.Fragment) {
             // supportLibrary 中的 Fragment
-            ((android.support.v4.app.Fragment) context).requestPermissions(permissions, REQUEST_PERM);
+            ((android.support.v4.app.Fragment) context)
+                    .requestPermissions(permissions, REQUEST_PERM);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Framework 中的 Fragment
             ((android.app.Fragment) context).requestPermissions(permissions, REQUEST_PERM);

@@ -18,8 +18,8 @@ import magic.annotation.RequirePermission;
  * <br>Date: 2017/7/19
  * <br>Email: developer.huajianjiang@gmail.com
  */
-final class PermProcessor {
-    public static final int REQUEST_PERM = 1;
+public final class PermProcessor {
+    private static final int REQUEST_PERM = 1;
     private static PermProcessor INSTANCE;
 
     private RuntimePermissionListener mListener;
@@ -35,12 +35,15 @@ final class PermProcessor {
         mPermMetaData = permMetaData;
     }
 
+    public PermProcessor get() {
+        return INSTANCE;
+    }
+
     static PermProcessor get(ProceedingJoinPoint requestJoinPoint) {
         return get(requestJoinPoint, null);
     }
 
-    static PermProcessor get(ProceedingJoinPoint requestJoinPoint,
-            RequirePermission permMetaData)
+    static PermProcessor get(ProceedingJoinPoint requestJoinPoint, RequirePermission permMetaData)
     {
         if (INSTANCE == null) {
             INSTANCE = new PermProcessor(requestJoinPoint, permMetaData);

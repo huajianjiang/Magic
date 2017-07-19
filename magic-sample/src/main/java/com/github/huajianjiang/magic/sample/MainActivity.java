@@ -32,8 +32,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @RequirePermission({Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE})
+    @RequirePermission(value = {Manifest.permission.READ_CONTACTS,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE}, module = MainActivity.class)
     private void requestPerm(String name) {
         Logger.e(TAG, "requestPerm>>" + name);
     }
