@@ -27,15 +27,15 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestPerm();
+                requestPerm("Perm");
             }
         });
     }
 
     @RequirePermission({Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE})
-    private void requestPerm() {
-        Logger.e(TAG,"requestPerm");
+    private void requestPerm(String name) {
+        Logger.e(TAG, "requestPerm>>" + name);
     }
 
 

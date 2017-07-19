@@ -10,14 +10,14 @@ import com.github.huajianjiang.magic.core.BuildConfig;
 public class Logger {
     private static final String TAG = "Logger";
 
-    public static final boolean LOGGABLE = BuildConfig.DEBUG;
+    public static final boolean LOGGABLE = true;
 
-    public static final int VERBOSE= Log.VERBOSE;
-    public static final int DEBUG= Log.DEBUG;
-    public static final int INFO= Log.INFO;
-    public static final int WARN= Log.WARN;
-    public static final int ERROR= Log.ERROR;
-    public static final int ASSERT= Log.ASSERT;
+    public static final int VERBOSE = Log.VERBOSE;
+    public static final int DEBUG = Log.DEBUG;
+    public static final int INFO = Log.INFO;
+    public static final int WARN = Log.WARN;
+    public static final int ERROR = Log.ERROR;
+    public static final int ASSERT = Log.ASSERT;
 
 
     public static void println(int priority, String tag, String msg) {
