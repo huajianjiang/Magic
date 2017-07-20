@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -17,16 +18,6 @@ import android.support.v4.content.ContextCompat;
  */
 public final class Perms {
     private static final int REQUEST_PERM = 1;
-
-    public static void checkContext(Object obj) {
-        if (obj instanceof Activity || obj instanceof android.support.v4.app.Fragment ||
-            obj instanceof android.app.Fragment)
-        {
-            return;
-        }
-        throw new RuntimeException(
-                "You should do checking RuntimePermission on android.app.Activity or android.support.v4.app.Fragment or android.app.Fragment");
-    }
 
     public static Activity getContext(Object obj) {
         if (obj instanceof Activity) {
@@ -51,13 +42,16 @@ public final class Perms {
             ActivityCompat.requestPermissions((Activity) context, permissions, REQUEST_PERM);
         } else if (context instanceof android.support.v4.app.Fragment) {
             // supportLibrary 中的 Fragment
-            ((android.support.v4.app.Fragment) context)
-                    .requestPermissions(permissions, REQUEST_PERM);
+            ((android.support.v4.app.Fragment) context).requestPermissions(permissions,
+                                                                           REQUEST_PERM);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Framework 中的 Fragment
             ((android.app.Fragment) context).requestPermissions(permissions, REQUEST_PERM);
+        } else {
+            throw new RuntimeException("Can not find correct context for permissions request");
         }
     }
+
 
     /**
      * 验证请求的权限是否都已被用户授予
@@ -71,7 +65,6 @@ public final class Perms {
         if (permissions.length < 1) {
             return true;
         }
-
         for (String perm : permissions) {
             if (ContextCompat.checkSelfPermission(context, perm) !=
                 PackageManager.PERMISSION_GRANTED)
@@ -81,6 +74,7 @@ public final class Perms {
         }
         return true;
     }
+
 
     /**
      * 验证之前权限请求后的授予情况结果

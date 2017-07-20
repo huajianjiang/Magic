@@ -4,7 +4,9 @@ import android.util.Log;
 
 import com.github.huajianjiang.magic.core.util.Logger;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -24,19 +26,9 @@ public class RespondPermsAspect {
     public void method() {
     }
 
-    @Around("method()")
-    public Object respondPermsAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        String tag = signature.getDeclaringType().getSimpleName();
-        Object target = joinPoint.getTarget();
-        Object[] args = joinPoint.getArgs();
-
-        String[] perms = (String[]) args[1];
-        for (String perm : perms) {
-            Logger.e(tag, perm);
-        }
-
-        return joinPoint.proceed();
+    @After("method()")
+    public void respondPermsAdvice(JoinPoint joinPoint) throws Throwable {
+        PermProcessor.proceedResponse(joinPoint);
     }
 
 }

@@ -3,6 +3,7 @@ package com.github.huajianjiang.magic.core.aspect.permission;
 import android.app.Activity;
 
 import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
+import com.github.huajianjiang.magic.core.util.Logger;
 import com.github.huajianjiang.magic.core.util.Perms;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,27 +26,10 @@ public class RequestPermsAspect {
     }
 
     @Around("method(permMetaData)")
-    public Object requestPermsAdvice(ProceedingJoinPoint joinPoint,
-            RequirePermission permMetaData) throws Throwable
+    public Object requestPermsAdvice(ProceedingJoinPoint joinPoint, RequirePermission permMetaData)
+            throws Throwable
     {
-        Object target = joinPoint.getTarget();
-        String[] perms = permMetaData.value();
-        Class<?> module = permMetaData.module();
-
-        Activity context = Perms.getContext(target);
-
-        if (Perms.verifyPermissions(context, perms)) {
-            return joinPoint.proceed();
-        }
-
-        RuntimePermissionModule permissionModule = null;
-        if (target instanceof RuntimePermissionModule){
-            permissionModule = (RuntimePermissionModule) target;
-        }
-
-        Perms.requestPermissions(target, perms);
-
-        return null;
+        return PermProcessor.get(joinPoint, permMetaData).proceedRequest();
     }
 
 }

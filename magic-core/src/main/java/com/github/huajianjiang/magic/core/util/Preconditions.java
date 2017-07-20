@@ -23,6 +23,10 @@ public class Preconditions {
         return c == null || c.isEmpty();
     }
 
+    public static boolean isNullOrEmpty(Object[] obj) {
+        return obj == null || obj.length == 0;
+    }
+
     public static <T> T checkNotNull(T ref, Object expMsg) {
         if (ref == null) throw new NullPointerException(String.valueOf(expMsg));
         return ref;

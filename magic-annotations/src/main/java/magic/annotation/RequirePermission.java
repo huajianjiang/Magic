@@ -18,6 +18,4 @@ public @interface RequirePermission {
     String[] value() default {};
 
     boolean explain() default true;
-
-    Class<?> module() default Void.class;
 }
