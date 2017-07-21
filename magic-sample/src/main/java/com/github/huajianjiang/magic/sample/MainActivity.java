@@ -50,16 +50,17 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
     }
 
     @RequirePermission(value = {Manifest.permission.CALL_PHONE,
-            Manifest.permission.CAMERA}, requestCode = 0, explain = true, limit = RequirePermission.Limit.ALL)
+            Manifest.permission.CAMERA}, requestCode = 0, explain = true, limit = RequirePermission.Limit.ANY)
     private void requestPerm2() {
         Toast.makeText(this, TAG + ">All permissions granted,do something 2 ", Toast.LENGTH_SHORT).show();
     }
 
     @RequirePermission(value = {Manifest.permission.READ_CONTACTS,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode = 1, explain = false)
+            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode = 1, explain = false, limit = RequirePermission.Limit.ANY)
     private void requestPerm() {
-        Toast.makeText(this,TAG + ">All permissions granted,do something", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, TAG + ">All permissions granted,do something", Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
 
 
     @Override
-    public void showRequestPermissionsRationale(String[] permissions,
+    public void showRequestPermissionsRationale(@NonNull String[] permissions,
             final PermProcessor processor)
     {
         Toast.makeText(this,TAG + ">showRequestPermissionsRationale", Toast.LENGTH_SHORT).show();
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
     }
 
     @Override
-    public void onRequestPermissionsGranted(int requestCode, String[] permissions) {
+    public void onRequestPermissionsGranted(int requestCode, @NonNull String[] permissions) {
         if (requestCode == 0) {
             requestPerm2();
         } else if (requestCode == 1) {
@@ -98,11 +99,27 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
     }
 
     @Override
-    public void onRequestPermissionsDenied(String[] permissions) {
+    public void onRequestPermissionsDenied(@NonNull String[] permissions) {
         Toast.makeText(this, TAG + ">onRequestPermissionsDenied", Toast.LENGTH_SHORT).show();
         for (String perm : permissions) {
             Logger.e(TAG, TAG + ">onRequestPermissionsDenied=" + perm);
         }
+    }
+
+    @NonNull
+    @Override
+    public RequirePermission.Limit getRequestPermissionsLimit(int requestCode) {
+        Logger.e(TAG, TAG + ">getRequestPermissionsLimit=" + requestCode);
+        RequirePermission.Limit result = RequirePermission.Limit.ALL;
+        switch (requestCode) {
+            case 0:
+                result = RequirePermission.Limit.ANY;
+                break;
+            case 1:
+                result = RequirePermission.Limit.ANY;
+                break;
+        }
+        return result;
     }
 
 

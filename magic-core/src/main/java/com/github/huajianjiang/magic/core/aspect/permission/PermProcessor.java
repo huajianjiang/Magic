@@ -59,9 +59,21 @@ public final class PermProcessor {
 
         Object target = joinPoint.getTarget();
         Activity context = Perms.getContext(target);
+        RequirePermission.Limit limit = permMetaData.limit();
         String[] perms = permMetaData.value();
 
-        if (Perms.verifyPermissions(context, perms)) {
+        boolean ok = false;
+
+        switch (limit) {
+            case ALL:
+                ok = Perms.verifyAllPermissions(context, perms);
+                break;
+            case ANY:
+                ok = Perms.verifyAnyPermissions(context, perms);
+                break;
+        }
+
+        if (ok) {
             return joinPoint.proceed();
         }
 
@@ -94,17 +106,27 @@ public final class PermProcessor {
     static void proceedResponse(JoinPoint responseJoinPoint) throws Throwable {
         RuntimePermissionModule module = getModule(responseJoinPoint.getTarget());
         if (module == null) return;
-
+        
         final Object[] args = responseJoinPoint.getArgs();
         if (Preconditions.isNullOrEmpty(args)) return;
 
         final int requestCode = (int) args[0];
         final String[] perms = (String[]) args[1];
         final int[] grantResults = (int[]) args[2];
+        final RequirePermission.Limit limit = module.getRequestPermissionsLimit(requestCode);
 
-        final boolean allGranted = Perms.verifyPermissions(grantResults);
+        boolean ok = false;
 
-        if (allGranted) {
+        switch (limit) {
+            case ALL:
+                ok = Perms.verifyAllPermissions(grantResults);
+                break;
+            case ANY:
+                ok = Perms.verifyAnyPermissions(grantResults);
+                break;
+        }
+        
+        if (ok) {
             module.onRequestPermissionsGranted(requestCode, perms);
         } else {
             List<String> deniedPerms = new ArrayList<>();

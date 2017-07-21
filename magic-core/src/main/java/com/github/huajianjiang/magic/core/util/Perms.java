@@ -59,7 +59,7 @@ public final class Perms {
      * @param permissions 所有需要验证的权限名称
      * @return 如果之前都被授予就返回 true，如果其中一个权限之前被拒,就返回 false
      */
-    public static boolean verifyPermissions(@NonNull Context context, @NonNull String[] permissions)
+    public static boolean verifyAllPermissions(@NonNull Context context, @NonNull String[] permissions)
     {
         if (permissions.length < 1) {
             return true;
@@ -74,6 +74,21 @@ public final class Perms {
         return true;
     }
 
+    public static boolean verifyAnyPermissions(@NonNull Context context, @NonNull String[] permissions)
+    {
+        if (permissions.length < 1) {
+            return true;
+        }
+        for (String perm : permissions) {
+            if (ContextCompat.checkSelfPermission(context, perm) ==
+                PackageManager.PERMISSION_GRANTED)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * 验证之前权限请求后的授予情况结果
@@ -81,7 +96,7 @@ public final class Perms {
      * @param grantResults 所有需要验证的权限名称
      * @return 如果之前请求的权限都被授予了就返回 true，如果其中一个权限之前被拒,则返回 false
      */
-    public static boolean verifyPermissions(@NonNull int[] grantResults) {
+    public static boolean verifyAllPermissions(@NonNull int[] grantResults) {
         if (grantResults.length < 1) {
             return false;
         }
@@ -92,6 +107,19 @@ public final class Perms {
             }
         }
         return true;
+    }
+
+    public static boolean verifyAnyPermissions(@NonNull int[] grantResults) {
+        if (grantResults.length < 1) {
+            return false;
+        }
+
+        for (int result : grantResults) {
+            if (result == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

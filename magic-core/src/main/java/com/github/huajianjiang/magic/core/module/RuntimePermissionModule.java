@@ -1,6 +1,10 @@
 package com.github.huajianjiang.magic.core.module;
 
+import android.support.annotation.NonNull;
+
 import com.github.huajianjiang.magic.core.aspect.permission.PermProcessor;
+
+import magic.annotation.RequirePermission;
 
 /**
  * <p>Author: Huajian Jiang
@@ -12,15 +16,22 @@ public interface RuntimePermissionModule {
      * @param permissions
      * @param processor
      */
-    void showRequestPermissionsRationale(String[] permissions, PermProcessor processor);
+    void showRequestPermissionsRationale(@NonNull String[] permissions, PermProcessor processor);
 
     /**
      * @param permissions
      */
-    void onRequestPermissionsGranted(int requestCode, String[] permissions);
+    void onRequestPermissionsGranted(int requestCode, @NonNull String[] permissions);
 
     /**
      * @param permissions
      */
-    void onRequestPermissionsDenied(String[] permissions);
+    void onRequestPermissionsDenied(@NonNull String[] permissions);
+
+    /**
+     * @param requestCode
+     * @return
+     */
+    @NonNull
+    RequirePermission.Limit getRequestPermissionsLimit(int requestCode);
 }
