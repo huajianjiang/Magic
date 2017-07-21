@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -42,8 +41,8 @@ public final class Perms {
             ActivityCompat.requestPermissions((Activity) context, permissions, REQUEST_PERM);
         } else if (context instanceof android.support.v4.app.Fragment) {
             // supportLibrary 中的 Fragment
-            ((android.support.v4.app.Fragment) context).requestPermissions(permissions,
-                                                                           REQUEST_PERM);
+            ((android.support.v4.app.Fragment) context)
+                    .requestPermissions(permissions, REQUEST_PERM);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Framework 中的 Fragment
             ((android.app.Fragment) context).requestPermissions(permissions, REQUEST_PERM);

@@ -14,5 +14,5 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)
-public @interface CheckLogin {
+public @interface RequireLogin {
 }

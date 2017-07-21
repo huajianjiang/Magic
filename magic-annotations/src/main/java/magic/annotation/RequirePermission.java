@@ -15,7 +15,39 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface RequirePermission {
+    /**
+     * @return
+     */
     String[] value() default {};
 
+    /**
+     * @return
+     */
+    int requestCode() default 0;
+
+    /**
+     * @return
+     */
     boolean explain() default true;
+
+    /**
+     * @return
+     */
+    Limit limit() default Limit.ALL;
+
+    /**
+     *
+     */
+    enum Limit {
+        /**
+         *
+         */
+        ANY,
+
+        /**
+         *
+         */
+        ALL,
+    }
+
 }

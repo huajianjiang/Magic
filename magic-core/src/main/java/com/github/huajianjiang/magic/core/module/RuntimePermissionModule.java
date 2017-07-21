@@ -16,8 +16,11 @@ public interface RuntimePermissionModule {
 
     /**
      * @param permissions
-     * @param processor
      */
-    void onRequestPermissionsDenied(String[] permissions, PermProcessor processor);
+    void onRequestPermissionsGranted(int requestCode, String[] permissions);
 
+    /**
+     * @param permissions
+     */
+    void onRequestPermissionsDenied(String[] permissions);
 }

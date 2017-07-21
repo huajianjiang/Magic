@@ -1,7 +1,6 @@
 package com.github.huajianjiang.magic.sample;
 
 import android.Manifest;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -18,8 +17,8 @@ import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
 
 import magic.annotation.RequirePermission;
 
-public class MainActivity extends AppCompatActivity implements RuntimePermissionModule {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class SecondActivity extends AppCompatActivity implements RuntimePermissionModule {
+    private static final String TAG = SecondActivity.class.getSimpleName();
 
     private View mRootView;
 
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
     }
 
     @RequirePermission(value = {Manifest.permission.CALL_PHONE,
-            Manifest.permission.CAMERA}, requestCode = 0, explain = true, limit = RequirePermission.Limit.ALL)
+            Manifest.permission.CAMERA}, requestCode = 0, explain = true)
     private void requestPerm2() {
         Toast.makeText(this, TAG + ">All permissions granted,do something 2 ", Toast.LENGTH_SHORT).show();
     }
@@ -59,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode = 1, explain = false)
     private void requestPerm() {
-        Toast.makeText(this,TAG + ">All permissions granted,do something", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, TAG + ">All permissions granted,do something", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -69,23 +68,22 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
     @Override
     public void showRequestPermissionsRationale(String[] permissions,
             final PermProcessor processor)
     {
-        Toast.makeText(this,TAG + ">showRequestPermissionsRationale", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, TAG + ">showRequestPermissionsRationale", Toast.LENGTH_SHORT).show();
         for (String perm : permissions) {
             Logger.e(TAG, TAG + ">showRequestPermissionsRationale=" + perm);
         }
 
-        Snackbar.make(mRootView, TAG + ">showRequestPermissionsRationale", Snackbar.LENGTH_INDEFINITE)
-                .setAction("OK", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        processor.requestPermissions();
-                    }
-                }).show();
+        Snackbar.make(mRootView, TAG + ">showRequestPermissionsRationale",
+                Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                processor.requestPermissions();
+            }
+        }).show();
     }
 
     @Override
@@ -122,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SecondActivity.class));
             return true;
         }
 

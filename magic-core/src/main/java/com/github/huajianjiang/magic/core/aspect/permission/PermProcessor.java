@@ -1,16 +1,12 @@
 package com.github.huajianjiang.magic.core.aspect.permission;
 
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.util.SparseArray;
 
 import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
-import com.github.huajianjiang.magic.core.util.Logger;
 import com.github.huajianjiang.magic.core.util.Perms;
 import com.github.huajianjiang.magic.core.util.Preconditions;
 
@@ -18,11 +14,8 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.WeakHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import magic.annotation.RequirePermission;
 
@@ -32,18 +25,17 @@ import magic.annotation.RequirePermission;
  * <br>Email: developer.huajianjiang@gmail.com
  */
 public final class PermProcessor {
-    private static final AtomicInteger REQUEST_PERM = new AtomicInteger();
-
-    private SparseArray<ProceedingJoinPoint> mRequestJoinPoints = new SparseArray<>();
-
+    private ProceedingJoinPoint mRequestJoinPoint;
     private RequirePermission mPermMetaData;
+
+    PermProcessor(ProceedingJoinPoint requestJoinPoint) {
+        this(requestJoinPoint, null);
+    }
 
     PermProcessor(ProceedingJoinPoint requestJoinPoint, RequirePermission permMetaData) {
         mRequestJoinPoint = requestJoinPoint;
-        permMetaData = checkPermMetaData(requestJoinPoint, permMetaData);
-        mPermMetaData = permMetaData;
+        mPermMetaData = checkPermMetaData(requestJoinPoint, permMetaData);
     }
-
 
     private static RequirePermission checkPermMetaData(ProceedingJoinPoint requestJoinPoint,
             RequirePermission permMetaData)
@@ -57,17 +49,13 @@ public final class PermProcessor {
 
     @Nullable
     private static RuntimePermissionModule getModule(Object target) {
-        return RuntimePermissionModule.class.isInstance(target) ? (RuntimePermissionModule) target
-                                                                : null;
+        return RuntimePermissionModule.class.isInstance(target) ? (RuntimePermissionModule) target :
+                null;
     }
 
-
     Object proceedRequest() throws Throwable {
-        ProceedingJoinPoint joinPoint = mRequestJoinPoint;
-        RequirePermission permMetaData = mPermMetaData;
-        if (joinPoint == null) {
-            return null;
-        }
+        final ProceedingJoinPoint joinPoint = mRequestJoinPoint;
+        final RequirePermission permMetaData = mPermMetaData;
 
         Object target = joinPoint.getTarget();
         Activity context = Perms.getContext(target);
@@ -86,7 +74,7 @@ public final class PermProcessor {
                 }
             }
 
-            final boolean hasShouldExplainPerms = !Preconditions.isNullOrEmpty(shouldExplainPerms);
+            boolean hasShouldExplainPerms = !Preconditions.isNullOrEmpty(shouldExplainPerms);
 
             if (hasShouldExplainPerms) {
                 RuntimePermissionModule module = getModule(target);
@@ -103,46 +91,36 @@ public final class PermProcessor {
         return null;
     }
 
-
     static void proceedResponse(JoinPoint responseJoinPoint) throws Throwable {
-        PermProcessor permProcessor = INSTANCE;
-        if (permProcessor == null) {
-            return;
-        }
+        RuntimePermissionModule module = getModule(responseJoinPoint.getTarget());
+        if (module == null) return;
 
-        Object[] args = responseJoinPoint.getArgs();
+        final Object[] args = responseJoinPoint.getArgs();
         if (Preconditions.isNullOrEmpty(args)) return;
+
+        final int requestCode = (int) args[0];
+        final String[] perms = (String[]) args[1];
         final int[] grantResults = (int[]) args[2];
+
         final boolean allGranted = Perms.verifyPermissions(grantResults);
 
         if (allGranted) {
-            ProceedingJoinPoint requestJoinPoint = permProcessor.mRequestJoinPoint;
-            if (requestJoinPoint != null) {
-                requestJoinPoint.proceed();
-            }
+            module.onRequestPermissionsGranted(requestCode, perms);
         } else {
-            RuntimePermissionModule module = getModule(responseJoinPoint.getTarget());
-            if (module != null) {
-                String[] perms = (String[]) args[1];
-                List<String> deniedPerms = new ArrayList<>();
-                for (int i = 0; i < grantResults.length; i++) {
-                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                        deniedPerms.add(perms[i]);
-                    }
+            List<String> deniedPerms = new ArrayList<>();
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    deniedPerms.add(perms[i]);
                 }
-                module.onRequestPermissionsDenied(deniedPerms.toArray(new String[]{}),
-                                                  permProcessor);
             }
+            module.onRequestPermissionsDenied(deniedPerms.toArray(new String[]{}));
         }
     }
 
     public void requestPermissions() {
-        ProceedingJoinPoint joinPoint = mRequestJoinPoint;
-        RequirePermission permMetaData = mPermMetaData;
-        if (joinPoint == null) {
-            Logger.e("MainActivity", "requestPermissions failed because of GC");
-            return;
-        }
+        final ProceedingJoinPoint joinPoint = mRequestJoinPoint;
+        final RequirePermission permMetaData = mPermMetaData;
+        final int requestCode = permMetaData.requestCode();
 
         Object context = joinPoint.getTarget();
         String[] perms = permMetaData.value();
@@ -151,13 +129,13 @@ public final class PermProcessor {
         if (context instanceof Activity) {
             // 权限请求所在上下文为 Framework 中的 Activity 或者 supportLibrary 中的 Activity
             // (FragmentActivity/AppCompatActivity)
-            ActivityCompat.requestPermissions((Activity) context, perms, REQUEST_PERM);
+            ActivityCompat.requestPermissions((Activity) context, perms, requestCode);
         } else if (context instanceof android.support.v4.app.Fragment) {
             // supportLibrary 中的 Fragment
-            ((android.support.v4.app.Fragment) context).requestPermissions(perms, REQUEST_PERM);
+            ((android.support.v4.app.Fragment) context).requestPermissions(perms, requestCode);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Framework 中的 Fragment
-            ((android.app.Fragment) context).requestPermissions(perms, REQUEST_PERM);
+            ((android.app.Fragment) context).requestPermissions(perms, requestCode);
         } else {
             throw new RuntimeException("Can not find correct context for permissions request");
         }
