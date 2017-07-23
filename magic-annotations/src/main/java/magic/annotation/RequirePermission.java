@@ -1,5 +1,7 @@
 package magic.annotation;
 
+import android.support.annotation.IntRange;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -16,6 +18,16 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface RequirePermission {
     /**
+     *
+     */
+    @SuppressWarnings("PointlessBitwiseExpression")
+    int ALL = 0 << 15;
+    /**
+     *
+     */
+    int ANY = 1 << 15;
+
+    /**
      * @return
      */
     String[] value() default {};
@@ -23,6 +35,7 @@ public @interface RequirePermission {
     /**
      * @return
      */
+    @IntRange(from = 0, to = (1 << 15) - 1)
     int requestCode() default 0;
 
     /**
@@ -32,22 +45,9 @@ public @interface RequirePermission {
 
     /**
      * @return
+     * @see #ALL
+     * @see #ANY
      */
-    Limit limit() default Limit.ALL;
-
-    /**
-     *
-     */
-    enum Limit {
-        /**
-         *
-         */
-        ANY,
-
-        /**
-         *
-         */
-        ALL,
-    }
+    int limit() default ALL;
 
 }

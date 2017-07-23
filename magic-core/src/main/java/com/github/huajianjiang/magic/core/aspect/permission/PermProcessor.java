@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 
 import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
+import com.github.huajianjiang.magic.core.util.Logger;
 import com.github.huajianjiang.magic.core.util.Perms;
 import com.github.huajianjiang.magic.core.util.Preconditions;
 
@@ -18,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import magic.annotation.RequirePermission;
+
+import static magic.annotation.RequirePermission.ALL;
+import static magic.annotation.RequirePermission.ANY;
 
 /**
  * <p>Author: Huajian Jiang
@@ -59,10 +63,12 @@ public final class PermProcessor {
 
         Object target = joinPoint.getTarget();
         Activity context = Perms.getContext(target);
-        RequirePermission.Limit limit = permMetaData.limit();
+        int limit = permMetaData.limit();
         String[] perms = permMetaData.value();
 
-        boolean ok = false;
+        boolean ok;
+
+        Logger.e("PermProcessor", "proceedRequest>>>limit===>"+limit);
 
         switch (limit) {
             case ALL:
@@ -71,6 +77,9 @@ public final class PermProcessor {
             case ANY:
                 ok = Perms.verifyAnyPermissions(context, perms);
                 break;
+            default:
+                return new IllegalArgumentException(
+                        "unknown limit value,please using RequirePermission.ALL or RequirePermission.ANY");
         }
 
         if (ok) {
@@ -110,12 +119,16 @@ public final class PermProcessor {
         final Object[] args = responseJoinPoint.getArgs();
         if (Preconditions.isNullOrEmpty(args)) return;
 
-        final int requestCode = (int) args[0];
+        final int prc = (int) args[0];
         final String[] perms = (String[]) args[1];
         final int[] grantResults = (int[]) args[2];
-        final RequirePermission.Limit limit = module.getRequestPermissionsLimit(requestCode);
+        final int requestCode = getRequestCode(prc);
+        final int limit = getLimit(prc);
 
         boolean ok = false;
+
+        Logger.e("PermProcessor",
+                "proceedResponse>>>limit===>" + limit + ",requestCode=" + requestCode);
 
         switch (limit) {
             case ALL:
@@ -142,25 +155,43 @@ public final class PermProcessor {
     public void requestPermissions() {
         final ProceedingJoinPoint joinPoint = mRequestJoinPoint;
         final RequirePermission permMetaData = mPermMetaData;
-        final int requestCode = permMetaData.requestCode();
+        final int prc = getPackagedRequestCode(permMetaData.limit(), permMetaData.requestCode());
 
         Object context = joinPoint.getTarget();
         String[] perms = permMetaData.value();
+
+        Logger.e("PermProcessor", "requestPermissions>>>prc=" + prc);
 
         //检查权限请求所在的上下文环境
         if (context instanceof Activity) {
             // 权限请求所在上下文为 Framework 中的 Activity 或者 supportLibrary 中的 Activity
             // (FragmentActivity/AppCompatActivity)
-            ActivityCompat.requestPermissions((Activity) context, perms, requestCode);
+            ActivityCompat.requestPermissions((Activity) context, perms, prc);
         } else if (context instanceof android.support.v4.app.Fragment) {
             // supportLibrary 中的 Fragment
-            ((android.support.v4.app.Fragment) context).requestPermissions(perms, requestCode);
+            ((android.support.v4.app.Fragment) context).requestPermissions(perms, prc);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Framework 中的 Fragment
-            ((android.app.Fragment) context).requestPermissions(perms, requestCode);
+            ((android.app.Fragment) context).requestPermissions(perms, prc);
         } else {
             throw new RuntimeException("Can not find correct context for permissions request");
         }
+    }
+
+
+    private static final int LIMIT_SHIFT = 15;
+    private static final int LIMIT_MASK = 1 << LIMIT_SHIFT;
+
+    private static int getPackagedRequestCode(int limit, int requestCode) {
+        return (limit & LIMIT_MASK) | (requestCode & ~LIMIT_MASK);
+    }
+
+    private static int getLimit(int packagedRequestCode) {
+        return packagedRequestCode & LIMIT_MASK;
+    }
+
+    private static int getRequestCode(int packagedRequestCode) {
+        return packagedRequestCode & ~LIMIT_MASK;
     }
 
 }

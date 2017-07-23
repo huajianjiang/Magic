@@ -1,8 +1,21 @@
+import com.android.build.gradle.internal.LoggerWrapper
+import com.android.build.gradle.internal.SdkHandler
+
 apply plugin: 'java'
+
+def logger = new LoggerWrapper(project.logger)
+def sdkHandler = new SdkHandler(project, logger)
+for (File file : sdkHandler.sdkLoader.repositories) {
+    repositories.maven {
+        url = file.toURI()
+    }
+}
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
+
 dependencies {
-   //compile deps.annotations
+    compileOnly 'com.google.android:android:4.1.1.4'
+    compile deps.annotations
 }

@@ -50,14 +50,14 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
     }
 
     @RequirePermission(value = {Manifest.permission.CALL_PHONE,
-            Manifest.permission.CAMERA}, requestCode = 0, explain = true, limit = RequirePermission.Limit.ANY)
+            Manifest.permission.CAMERA}, requestCode = 0, explain = true, limit = RequirePermission.ALL)
     private void requestPerm2() {
         Toast.makeText(this, TAG + ">All permissions granted,do something 2 ", Toast.LENGTH_SHORT).show();
     }
 
     @RequirePermission(value = {Manifest.permission.READ_CONTACTS,
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode = 1, explain = false, limit = RequirePermission.Limit.ANY)
+            Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode = 1, explain = false, limit = RequirePermission.ANY)
     private void requestPerm() {
         Toast.makeText(this, TAG + ">All permissions granted,do something", Toast.LENGTH_SHORT)
                 .show();
@@ -104,22 +104,6 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
         for (String perm : permissions) {
             Logger.e(TAG, TAG + ">onRequestPermissionsDenied=" + perm);
         }
-    }
-
-    @NonNull
-    @Override
-    public RequirePermission.Limit getRequestPermissionsLimit(int requestCode) {
-        Logger.e(TAG, TAG + ">getRequestPermissionsLimit=" + requestCode);
-        RequirePermission.Limit result = RequirePermission.Limit.ALL;
-        switch (requestCode) {
-            case 0:
-                result = RequirePermission.Limit.ANY;
-                break;
-            case 1:
-                result = RequirePermission.Limit.ANY;
-                break;
-        }
-        return result;
     }
 
 

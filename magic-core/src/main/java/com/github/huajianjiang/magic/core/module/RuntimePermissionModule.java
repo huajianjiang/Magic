@@ -4,8 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.github.huajianjiang.magic.core.aspect.permission.PermProcessor;
 
-import magic.annotation.RequirePermission;
-
 /**
  * <p>Author: Huajian Jiang
  * <br>Date: 2017/7/18
@@ -27,11 +25,4 @@ public interface RuntimePermissionModule {
      * @param permissions
      */
     void onRequestPermissionsDenied(@NonNull String[] permissions);
-
-    /**
-     * @param requestCode
-     * @return
-     */
-    @NonNull
-    RequirePermission.Limit getRequestPermissionsLimit(int requestCode);
 }
