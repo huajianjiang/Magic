@@ -24,15 +24,15 @@ public class LoginAspect {
 
     @Around("method()")
     public Object loginAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
-        boolean shouldIntercept = false;
+        boolean intercept = false;
         Object target = joinPoint.getTarget();
 
         if (target instanceof LoginModule) {
             LoginModule module = (LoginModule) target;
-            shouldIntercept = !module.checkLogin();
+            intercept = !module.checkLogin();
         }
 
-        if (shouldIntercept) {
+        if (intercept) {
             return null;
         }
 

@@ -1,5 +1,7 @@
 package com.github.huajianjiang.magic.core.aspect.permission;
 
+import com.github.huajianjiang.magic.core.util.Logger;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

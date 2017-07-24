@@ -11,12 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.github.huajianjiang.magic.core.aspect.permission.PermProcessor;
 import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
 
 import magic.annotation.RequirePermission;
+import magic.annotation.SingleClick;
 
 public class MainActivity extends AppCompatActivity implements RuntimePermissionModule {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -46,7 +48,25 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
             }
         });
 
+        Button singleClickBtn = (Button) findViewById(R.id.singleClick);
+        singleClickBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testSingleClick();
+            }
+        });
+
         mRootView = findViewById(R.id.rootView);
+    }
+
+    @SingleClick(500)
+    private void testSingleClick() {
+        try {
+            Thread.sleep(0);
+            Logger.e(TAG, "onSingleClick");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @RequirePermission(value = {Manifest.permission.CALL_PHONE,

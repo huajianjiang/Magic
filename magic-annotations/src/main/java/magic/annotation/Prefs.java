@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * <br>Email: developer.huajianjiang@gmail.com
  */
 @Documented
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)
 public @interface Prefs {
 }

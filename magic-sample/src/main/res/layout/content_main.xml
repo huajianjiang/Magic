@@ -10,7 +10,8 @@
     tools:context="com.github.huajianjiang.magic.sample.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+    <Button
+        android:id="@+id/singleClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"

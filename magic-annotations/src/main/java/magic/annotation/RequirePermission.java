@@ -57,7 +57,7 @@ public @interface RequirePermission {
 
     /**
      * 设置权限请求限制模式,该值必须为 {@link #ALL} 和 {@link #ANY} 中的一个
-     * @return 权限请求模式,默认值为 {@link #ALL}
+     * @return 权限请求限制模式，默认值为 {@link #ALL}
      * @see #ALL
      * @see #ANY
      */

@@ -10,12 +10,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.github.huajianjiang.magic.core.aspect.permission.PermProcessor;
 import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
 
 import magic.annotation.RequirePermission;
+import magic.annotation.SingleClick;
 
 public class SecondActivity extends AppCompatActivity implements RuntimePermissionModule {
     private static final String TAG = SecondActivity.class.getSimpleName();
@@ -42,6 +44,20 @@ public class SecondActivity extends AppCompatActivity implements RuntimePermissi
             @Override
             public void onClick(View view) {
                 requestPerm2();
+            }
+        });
+
+        Button singleClickBtn = (Button) findViewById(R.id.singleClick);
+        singleClickBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            @SingleClick(4000)
+            public void onClick(View v) {
+                try {
+                    Thread.sleep(3000);
+                    Logger.e(TAG, "onSingleClick");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
