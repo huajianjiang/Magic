@@ -3,12 +3,14 @@ import com.android.build.gradle.internal.SdkHandler
 
 apply plugin: 'java'
 
-def logger = new LoggerWrapper(project.logger)
-def sdkHandler = new SdkHandler(project, logger)
-for (File file : sdkHandler.sdkLoader.repositories) {
-    repositories.maven {
-        url = file.toURI()
-    }
+def Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def supportDir = properties.getProperty("sdk.dir") + '/extras/android/m2repository';
+
+repositories {
+    jcenter()
+    // java gradle 插件必须使用本地 maven 仓库引用本地支持库
+    maven { url supportDir }
 }
 
 sourceCompatibility = "1.7"
@@ -16,6 +18,13 @@ targetCompatibility = "1.7"
 
 
 dependencies {
-    compileOnly 'com.google.android:android:4.1.1.4'
     compile deps.annotations
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = 'UTF-8'
 }

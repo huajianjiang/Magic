@@ -79,7 +79,8 @@ public final class PermProcessor {
                 break;
             default:
                 return new IllegalArgumentException(
-                        "unknown limit value,please using RequirePermission.ALL or RequirePermission.ANY");
+                        "unknown limit , please using RequirePermission.ALL or " +
+                        "RequirePermission.ANY");
         }
 
         if (ok) {
@@ -152,6 +153,9 @@ public final class PermProcessor {
         }
     }
 
+    /**
+     * 请求运行时权限
+     */
     public void requestPermissions() {
         final ProceedingJoinPoint joinPoint = mRequestJoinPoint;
         final RequirePermission permMetaData = mPermMetaData;

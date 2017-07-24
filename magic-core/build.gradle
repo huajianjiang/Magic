@@ -28,7 +28,6 @@ dependencies {
     compile 'org.aspectj:aspectjrt:1.8.9'
     compile project(':magic-annotations')
     compile deps.compat
-    compile deps.annotations
 }
 
 android.libraryVariants.all { variant ->
