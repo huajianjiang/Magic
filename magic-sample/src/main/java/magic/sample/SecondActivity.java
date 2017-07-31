@@ -1,4 +1,4 @@
-package com.github.huajianjiang.magic.sample;
+package magic.sample;
 
 import android.Manifest;
 import android.os.Bundle;
@@ -13,8 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.github.huajianjiang.magic.core.aspect.permission.PermissionHandler;
-import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
+import magic.core.aspect.permission.PermissionHandler;
+import magic.core.module.RuntimePermissionModule;
 
 import magic.annotation.RequirePermission;
 import magic.annotation.SingleClick;

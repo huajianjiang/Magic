@@ -1,4 +1,4 @@
-package com.github.huajianjiang.magic.sample;
+package magic.sample;
 
 import android.util.Log;
 

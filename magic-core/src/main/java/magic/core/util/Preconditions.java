@@ -1,4 +1,4 @@
-package com.github.huajianjiang.magic.core.util;
+package magic.core.util;
 
 import android.os.Bundle;
 

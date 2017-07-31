@@ -1,4 +1,4 @@
-package com.github.huajianjiang.magic.core.aspect.permission;
+package magic.core.aspect.permission;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;

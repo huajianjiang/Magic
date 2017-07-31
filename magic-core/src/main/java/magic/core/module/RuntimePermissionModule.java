@@ -1,8 +1,8 @@
-package com.github.huajianjiang.magic.core.module;
+package magic.core.module;
 
 import android.support.annotation.NonNull;
 
-import com.github.huajianjiang.magic.core.aspect.permission.PermissionHandler;
+import magic.core.aspect.permission.PermissionHandler;
 
 /**
  * <p>Author: Huajian Jiang

@@ -1,6 +1,6 @@
-package com.github.huajianjiang.magic.core.aspect;
+package magic.core.aspect;
 
-import com.github.huajianjiang.magic.core.module.LoginModule;
+import magic.core.module.LoginModule;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

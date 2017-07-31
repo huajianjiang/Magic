@@ -1,4 +1,4 @@
-package com.github.huajianjiang.magic.core.util;
+package magic.core.util;
 
 import android.app.Activity;
 import android.content.Context;

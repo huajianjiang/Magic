@@ -19,7 +19,7 @@ android {
     compileSdkVersion versions.compileSdk
     buildToolsVersion versions.buildTools
     defaultConfig {
-        applicationId "com.github.huajianjiang.magic.sample"
+        applicationId "magic.sample"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
     }

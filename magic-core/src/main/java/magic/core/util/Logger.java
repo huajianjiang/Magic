@@ -1,8 +1,7 @@
-package com.github.huajianjiang.magic.core.util;
+package magic.core.util;
 
 import android.util.Log;
 
-import com.github.huajianjiang.magic.core.BuildConfig;
 
 /**
  * Created by jhj_Plus on 2016/8/4.
@@ -18,7 +17,6 @@ public class Logger {
     public static final int WARN = Log.WARN;
     public static final int ERROR = Log.ERROR;
     public static final int ASSERT = Log.ASSERT;
-
 
     public static void println(int priority, String tag, String msg) {
         println(priority, tag, msg, null);

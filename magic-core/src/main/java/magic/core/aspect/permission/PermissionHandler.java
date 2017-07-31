@@ -1,4 +1,4 @@
-package com.github.huajianjiang.magic.core.aspect.permission;
+package magic.core.aspect.permission;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;
@@ -6,10 +6,10 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 
-import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
-import com.github.huajianjiang.magic.core.util.Logger;
-import com.github.huajianjiang.magic.core.util.Perms;
-import com.github.huajianjiang.magic.core.util.Preconditions;
+import magic.core.module.RuntimePermissionModule;
+import magic.core.util.Logger;
+import magic.core.util.Perms;
+import magic.core.util.Preconditions;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
