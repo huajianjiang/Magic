@@ -2,6 +2,7 @@ package com.github.huajianjiang.magic.sample;
 
 import android.util.Log;
 
+
 /**
  * Created by jhj_Plus on 2016/8/4.
  */

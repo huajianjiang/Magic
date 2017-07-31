@@ -2,7 +2,7 @@ package com.github.huajianjiang.magic.core.module;
 
 import android.support.annotation.NonNull;
 
-import com.github.huajianjiang.magic.core.aspect.permission.PermProcessor;
+import com.github.huajianjiang.magic.core.aspect.permission.PermissionHandler;
 
 /**
  * <p>Author: Huajian Jiang
@@ -12,17 +12,22 @@ import com.github.huajianjiang.magic.core.aspect.permission.PermProcessor;
 public interface RuntimePermissionModule {
     /**
      * @param permissions
-     * @param processor
+     * @param handler
      */
-    void showRequestPermissionsRationale(@NonNull String[] permissions, PermProcessor processor);
+    void showRequestPermissionsRationale(@NonNull String[] permissions, PermissionHandler handler);
 
     /**
-     * @param permissions
+     * @param requestCode
+     * @param grantedPermissions
+     * @param deniedPermissions
      */
-    void onRequestPermissionsGranted(int requestCode, @NonNull String[] permissions);
+    void onRequestPermissionsGranted(int requestCode, @NonNull String[] grantedPermissions,
+            @NonNull String[] deniedPermissions);
 
     /**
-     * @param permissions
+     * @param grantedPermissions
+     * @param deniedPermissions
      */
-    void onRequestPermissionsDenied(@NonNull String[] permissions);
+    void onRequestPermissionsDenied(@NonNull String[] grantedPermissions,
+            @NonNull String[] deniedPermissions);
 }

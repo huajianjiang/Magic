@@ -28,27 +28,27 @@ import static magic.annotation.RequirePermission.ANY;
  * <br>Date: 2017/7/19
  * <br>Email: developer.huajianjiang@gmail.com
  */
-public final class PermProcessor {
-    private ProceedingJoinPoint mRequestJoinPoint;
-    private RequirePermission mPermMetaData;
+public final class PermissionHandler {
+    private ProceedingJoinPoint mRequestJp;
+    private RequirePermission mMetaData;
 
-    PermProcessor(ProceedingJoinPoint requestJoinPoint) {
-        this(requestJoinPoint, null);
+    PermissionHandler(ProceedingJoinPoint requestJp) {
+        this(requestJp, null);
     }
 
-    PermProcessor(ProceedingJoinPoint requestJoinPoint, RequirePermission permMetaData) {
-        mRequestJoinPoint = requestJoinPoint;
-        mPermMetaData = checkPermMetaData(requestJoinPoint, permMetaData);
+    PermissionHandler(ProceedingJoinPoint requestJp, RequirePermission metaData) {
+        mRequestJp = requestJp;
+        mMetaData = checkPermMetaData(requestJp, metaData);
     }
 
-    private static RequirePermission checkPermMetaData(ProceedingJoinPoint requestJoinPoint,
-            RequirePermission permMetaData)
+    private static RequirePermission checkPermMetaData(ProceedingJoinPoint requestJp,
+            RequirePermission metaData)
     {
-        if (permMetaData == null) {
-            MethodSignature signature = (MethodSignature) requestJoinPoint.getSignature();
-            permMetaData = signature.getMethod().getAnnotation(RequirePermission.class);
+        if (metaData == null) {
+            MethodSignature signature = (MethodSignature) requestJp.getSignature();
+            metaData = signature.getMethod().getAnnotation(RequirePermission.class);
         }
-        return permMetaData;
+        return metaData;
     }
 
     @Nullable
@@ -57,18 +57,18 @@ public final class PermProcessor {
                 null;
     }
 
-    Object proceedRequest() throws Throwable {
-        final ProceedingJoinPoint joinPoint = mRequestJoinPoint;
-        final RequirePermission permMetaData = mPermMetaData;
+    Object onRequest() throws Throwable {
+        final ProceedingJoinPoint requestJp = mRequestJp;
+        final RequirePermission metaData = mMetaData;
 
-        Object target = joinPoint.getTarget();
-        Activity context = Perms.getContext(target);
-        int limit = permMetaData.limit();
-        String[] perms = permMetaData.value();
+        final Object target = requestJp.getTarget();
+        final Activity context = Perms.getContext(target);
+        final int limit = metaData.limit();
+        final String[] perms = metaData.value();
 
         boolean ok;
 
-        Logger.e("PermProcessor", "proceedRequest>>>limit===>"+limit);
+        Logger.e("PermissionHandler", "proceedRequest>>>limit===>"+limit);
 
         switch (limit) {
             case ALL:
@@ -84,10 +84,10 @@ public final class PermProcessor {
         }
 
         if (ok) {
-            return joinPoint.proceed();
+            return requestJp.proceed();
         }
 
-        boolean shouldExplain = permMetaData.explain();
+        boolean shouldExplain = metaData.explain();
         if (shouldExplain) {
             List<String> shouldExplainPerms = new ArrayList<>();
             for (String perm : perms) {
@@ -96,13 +96,13 @@ public final class PermProcessor {
                 }
             }
 
-            boolean hasShouldExplainPerms = !Preconditions.isNullOrEmpty(shouldExplainPerms);
+            final boolean hasShouldExplainPerms = !Preconditions.isNullOrEmpty(shouldExplainPerms);
 
             if (hasShouldExplainPerms) {
                 RuntimePermissionModule module = getModule(target);
                 if (module != null) {
                     module.showRequestPermissionsRationale(
-                            shouldExplainPerms.toArray(new String[]{}), PermProcessor.this);
+                            shouldExplainPerms.toArray(new String[]{}), PermissionHandler.this);
                 }
                 return null;
             }
@@ -113,13 +113,11 @@ public final class PermProcessor {
         return null;
     }
 
-    static void proceedResponse(JoinPoint responseJoinPoint) throws Throwable {
-        RuntimePermissionModule module = getModule(responseJoinPoint.getTarget());
+    static void onResponse(JoinPoint responseJp) throws Throwable {
+        RuntimePermissionModule module = getModule(responseJp.getTarget());
         if (module == null) return;
         
-        final Object[] args = responseJoinPoint.getArgs();
-        if (Preconditions.isNullOrEmpty(args)) return;
-
+        final Object[] args = responseJp.getArgs();
         final int prc = (int) args[0];
         final String[] perms = (String[]) args[1];
         final int[] grantResults = (int[]) args[2];
@@ -128,7 +126,7 @@ public final class PermProcessor {
 
         boolean ok = false;
 
-        Logger.e("PermProcessor",
+        Logger.e("PermissionHandler",
                 "proceedResponse>>>limit===>" + limit + ",requestCode=" + requestCode);
 
         switch (limit) {
@@ -139,17 +137,26 @@ public final class PermProcessor {
                 ok = Perms.verifyAnyPermissions(grantResults);
                 break;
         }
-        
-        if (ok) {
-            module.onRequestPermissionsGranted(requestCode, perms);
-        } else {
-            List<String> deniedPerms = new ArrayList<>();
-            for (int i = 0; i < grantResults.length; i++) {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    deniedPerms.add(perms[i]);
-                }
+
+        List<String> grantedTemp = new ArrayList<>();
+        List<String> deniedTemp = new ArrayList<>();
+
+        for (int i = 0; i < grantResults.length; i++) {
+            String perm = perms[i];
+            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                deniedTemp.add(perm);
+            } else {
+                grantedTemp.add(perm);
             }
-            module.onRequestPermissionsDenied(deniedPerms.toArray(new String[]{}));
+        }
+
+        final String[] grantedPerms = grantedTemp.toArray(new String[]{});
+        final String[] deniedPerms = deniedTemp.toArray(new String[]{});
+
+        if (ok) {
+            module.onRequestPermissionsGranted(requestCode, grantedPerms, deniedPerms);
+        } else {
+            module.onRequestPermissionsDenied(grantedPerms, deniedPerms);
         }
     }
 
@@ -157,14 +164,14 @@ public final class PermProcessor {
      * 请求运行时权限
      */
     public void requestPermissions() {
-        final ProceedingJoinPoint joinPoint = mRequestJoinPoint;
-        final RequirePermission permMetaData = mPermMetaData;
-        final int prc = getPackagedRequestCode(permMetaData.limit(), permMetaData.requestCode());
+        final ProceedingJoinPoint requestJp = mRequestJp;
+        final RequirePermission metaData = mMetaData;
+        final int prc = getPackagedRequestCode(metaData.limit(), metaData.requestCode());
 
-        Object context = joinPoint.getTarget();
-        String[] perms = permMetaData.value();
+        final Object context = requestJp.getTarget();
+        final String[] perms = metaData.value();
 
-        Logger.e("PermProcessor", "requestPermissions>>>prc=" + prc);
+        Logger.e("PermissionHandler", "requestPermissions>>>prc=" + prc);
 
         //检查权限请求所在的上下文环境
         if (context instanceof Activity) {

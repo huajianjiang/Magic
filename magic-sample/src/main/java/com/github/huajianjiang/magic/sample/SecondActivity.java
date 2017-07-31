@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.github.huajianjiang.magic.core.aspect.permission.PermProcessor;
+import com.github.huajianjiang.magic.core.aspect.permission.PermissionHandler;
 import com.github.huajianjiang.magic.core.module.RuntimePermissionModule;
 
 import magic.annotation.RequirePermission;
@@ -86,7 +86,7 @@ public class SecondActivity extends AppCompatActivity implements RuntimePermissi
 
     @Override
     public void showRequestPermissionsRationale(@NonNull String[] permissions,
-            final PermProcessor processor)
+            final PermissionHandler handler)
     {
         Toast.makeText(this, TAG + ">showRequestPermissionsRationale", Toast.LENGTH_SHORT).show();
         for (String perm : permissions) {
@@ -97,13 +97,14 @@ public class SecondActivity extends AppCompatActivity implements RuntimePermissi
                 Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                processor.requestPermissions();
+                handler.requestPermissions();
             }
         }).show();
     }
 
     @Override
-    public void onRequestPermissionsGranted(int requestCode, @NonNull String[] permissions) {
+    public void onRequestPermissionsGranted(int requestCode,@NonNull String[] grantedPermissions,
+            @NonNull String[] deniedPermissions) {
         if (requestCode == 0) {
             requestPerm2();
         } else if (requestCode == 1) {
@@ -112,9 +113,10 @@ public class SecondActivity extends AppCompatActivity implements RuntimePermissi
     }
 
     @Override
-    public void onRequestPermissionsDenied(@NonNull String[] permissions) {
+    public void onRequestPermissionsDenied(@NonNull String[] grantedPermissions,
+            @NonNull String[] deniedPermissions) {
         Toast.makeText(this, TAG + ">onRequestPermissionsDenied", Toast.LENGTH_SHORT).show();
-        for (String perm : permissions) {
+        for (String perm : deniedPermissions) {
             Logger.e(TAG, TAG + ">onRequestPermissionsDenied=" + perm);
         }
     }

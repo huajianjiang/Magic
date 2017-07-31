@@ -1,7 +1,5 @@
 package com.github.huajianjiang.magic.core.aspect.permission;
 
-import com.github.huajianjiang.magic.core.util.Logger;
-
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,15 +18,15 @@ public class RequestPermsAspect {
     private RequestPermsAspect() {
     }
 
-    @Pointcut("execution(@magic.annotation.RequirePermission * *(..)) && @annotation(permMetaData)")
-    public void method(RequirePermission permMetaData) {
+    @Pointcut("execution(@magic.annotation.RequirePermission * *(..)) && @annotation(metaData)")
+    public void method(RequirePermission metaData) {
     }
 
-    @Around("method(permMetaData)")
-    public Object requestPerms(ProceedingJoinPoint joinPoint,
-            RequirePermission permMetaData) throws Throwable
+    @Around("method(metaData)")
+    public Object onRequest(ProceedingJoinPoint joinPoint,
+            RequirePermission metaData) throws Throwable
     {
-        return new PermProcessor(joinPoint, permMetaData).proceedRequest();
+        return new PermissionHandler(joinPoint, metaData).onRequest();
     }
 
 }

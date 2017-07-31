@@ -21,8 +21,8 @@ public class ResponsePermsAspect {
     }
 
     @After("method()")
-    public void responsePerms(JoinPoint joinPoint) throws Throwable {
-        PermProcessor.proceedResponse(joinPoint);
+    public void onResponse(JoinPoint joinPoint) throws Throwable {
+        PermissionHandler.onResponse(joinPoint);
     }
 
 }
