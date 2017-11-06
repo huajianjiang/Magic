@@ -38,10 +38,10 @@ public final class PermissionHandler {
 
     PermissionHandler(ProceedingJoinPoint requestJp, RequirePermission metaData) {
         mRequestJp = requestJp;
-        mMetaData = checkPermMetaData(requestJp, metaData);
+        mMetaData = checkMetaData(requestJp, metaData);
     }
 
-    private static RequirePermission checkPermMetaData(ProceedingJoinPoint requestJp,
+    private static RequirePermission checkMetaData(ProceedingJoinPoint requestJp,
             RequirePermission metaData)
     {
         if (metaData == null) {
