@@ -22,7 +22,7 @@ ext.versions = [
         'minSdk'        : 9,
         'compileSdk'    : 25,
         'targetSdk'     : 25,
-        'buildTools'    : '25.0.2',
+        'buildTools'    : '27.0.3',
 
         'supportLibrary': '25.3.1',
 ]
